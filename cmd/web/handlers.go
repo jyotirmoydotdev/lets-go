@@ -10,8 +10,8 @@ import (
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
-		http.NotFound(w, r)
-		log.Println("404 - / - Path Not Found")
+		app.notFound(w)
+		app.errorLog.Println("Path not Found")
 		return
 	}
 
@@ -23,15 +23,13 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 	ts, err := template.ParseFiles(files...)
 	if err != nil {
-		app.errorLog.Println(err.Error())
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		app.serverError(w, err)
 		return
 	}
 
 	err = ts.ExecuteTemplate(w, "base", nil)
 	if err != nil {
-		app.errorLog.Println(err.Error())
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		app.serverError(w, err)
 	}
 
 }
@@ -46,8 +44,8 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil || id < 1 {
-		http.NotFound(w, r)
-		log.Println(http.StatusNotFound, "- /snippet/view?id= - Id is missing")
+		app.notFound(w)
+		app.errorLog.Println(http.StatusNotFound, "/snippet/view?id= - Id is missing")
 		return
 	}
 
@@ -58,7 +56,7 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", http.MethodPost)
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+		app.clientError(w, http.StatusMethodNotAllowed)
 		log.Printf("%d - /snippet/create - Method Not Allowed", http.StatusMethodNotAllowed)
 		return
 	}
