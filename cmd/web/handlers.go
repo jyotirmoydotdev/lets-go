@@ -35,12 +35,12 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		w.Header().Set("Allow", http.MethodGet)
-		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-		log.Println(http.StatusMethodNotAllowed, "- /snippet/view - Method Not Allow")
-		return
-	}
+	// if r.Method != http.MethodGet {
+	// 	w.Header().Set("Allow", http.MethodGet)
+	// 	http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+	// 	log.Println(http.StatusMethodNotAllowed, "- /snippet/view - Method Not Allow")
+	// 	return
+	// }
 
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil || id < 1 {
@@ -61,6 +61,15 @@ func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Printf("%d - /snippet/create - All OK", http.StatusOK)
-	w.Write([]byte("Create a new snippet...."))
+  title := "0 snail"
+  content := "0 snail\nClimb Mount Fuji, \nBut slowly, slowly!\n\n- Kobayashi Issa"
+  expires := 7
+
+  id, err := app.snippets.Insert(title, content, expires)
+  if err != nil {
+    app.serverError(w, err)
+    return
+  }
+
+  http.Redirect(w, r , fmt.Sprintf("/snippet/view?id=%d", id), http.StatusSeeOther)
 }
