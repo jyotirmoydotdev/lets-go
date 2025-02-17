@@ -38,12 +38,6 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
-	// if r.Method != http.MethodGet {
-	// 	w.Header().Set("Allow", http.MethodGet)
-	// 	http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-	// 	log.Println(http.StatusMethodNotAllowed, "- /snippet/view - Method Not Allow")
-	// 	return
-	// }
 
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil || id < 1 {
