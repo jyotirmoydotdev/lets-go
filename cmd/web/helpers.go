@@ -31,13 +31,13 @@ func (app *application) render(w http.ResponseWriter, status int, page string, d
 	}
 
 	buf := new(bytes.Buffer)
+	w.WriteHeader(status)
 
 	err := ts.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		app.serverError(w, err)
 	}
 
-	w.WriteHeader(status)
 
 	buf.WriteTo(w)
 }
