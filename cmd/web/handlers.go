@@ -10,13 +10,14 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/jyotirmoydotdev/lets-go/internal/models"
+	"github.com/jyotirmoydotdev/lets-go/internal/validator"
 )
 
 type snippetCreateForm struct {
-	Title       string
-	Content     string
-	Expires     int
-	FieldErrors map[string]string
+	Title   string
+	Content string
+	Expires int
+	validator.Validator
 }
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
@@ -79,10 +80,9 @@ func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request
 	}
 
 	form := snippetCreateForm{
-		Title:       r.PostForm.Get("title"),
-		Content:     r.PostForm.Get("content"),
-		Expires:     expires,
-		FieldErrors: map[string]string{},
+		Title:   r.PostForm.Get("title"),
+		Content: r.PostForm.Get("content"),
+		Expires: expires,
 	}
 
 	if strings.TrimSpace(form.Title) == "" {
@@ -99,7 +99,7 @@ func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request
 		form.FieldErrors["errors"] = "This field must equal 1, 7 or 365"
 	}
 
-	if len(form.FieldErrors) > 0 {
+	if !form.Valid() {
 		data := app.newTemplateData(r)
 		data.Form = form
 		app.render(w, http.StatusUnprocessableEntity, "create.tmpl", data)
