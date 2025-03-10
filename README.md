@@ -1,4 +1,5 @@
 # Snippetbox
+![](./screenshot.png)
 
 Snippetbox is a web application developed in Go that allows users to create, view, and share text snippets. This project is built following the *Let's Go* book by Alex Edwards, which provides a comprehensive guide to building web applications with Go.
 
