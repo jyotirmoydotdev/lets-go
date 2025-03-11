@@ -16,6 +16,10 @@ var mockSnippet = &models.Snippet{
 
 type SnippetModel struct{}
 
+func (m *SnippetModel) Insert(title string, content string, expires int) (int, error) {
+	return 2, nil
+}
+
 func (m *SnippetModel) Get(id int) (*models.Snippet, error) {
 	switch id {
 	case 1:
